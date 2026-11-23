@@ -10,13 +10,13 @@ Show your **Rocket League** stats in your OBS stream: the live score and your nu
 > **In development.** The layouts below are the design. The server, the editor and the setup are being built, so there is nothing to install yet.
 
 <p align="center">
-  <img src="docs/screenshots/layout-card.png" alt="Session card for 2v2 Doubles: rank Champion II Division 3, 1,284 MMR with 17 points to Division 4, 6 wins and 2 losses, a three-win streak, goals, assists, saves, shots, shot percentage, MVPs and the last five results" width="600">
+  <img src="docs/screenshots/layout-card.png" alt="Session card for 2v2 Doubles: rank Champion II Division 3, 1,284 MMR with 17 points to Division 4, 6 wins and 2 losses, a three-win streak, goals, assists, saves, shots, shot percentage, MVPs and the last five results with the MMR won or lost in each" width="600">
 </p>
 
 - Three layouts: a **Live bar** during the match, a **Session card** and a **Statfeed** pop-up
 - The session card switches through your ranked playlists (Duel, Doubles, Standard, Heatseeker, Hoops, Rumble, Snow Day, Dropshot). You pick which ones and how long each one stays
 - Your MMR per playlist with a bar that shows how many points are left to the next division or rank
-- Win and loss streaks, totals and your last five results per playlist, counted from the start of your stream
+- Win and loss streaks, totals and your last five results per playlist with the MMR won or lost in each game, counted from the start of your stream
 - Rank symbols in the Watchr style, or your own images if you prefer
 - An editor in your browser with a live preview, protected by a login, and a **Statistics** page with your matches, saved on your server
 - Data from the official Rocket League Stats API on your own PC: no account, no third-party server
