@@ -11,6 +11,7 @@ const FEED_EVENTS = ['goal', 'assist', 'save', 'epicsave', 'shot', 'demolish', '
 const PARTS = [['showStreak', 'partStreak'], ['showMmr', 'partMmr'], ['showStats', 'partStats'], ['showLast', 'partLast']];
 
 let lang = guessLang();
+$('intro').setAttribute('aria-label', TEXTS[lang].loading); // translated from the first frame, not only after the data is in
 let t = TEXTS[lang];
 let me = { user: null, loginEnabled: false, demo: false };
 let setup = null; // modes, tiers, ranks, playlists, player ...
@@ -36,6 +37,7 @@ function paintTexts() {
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t[el.dataset.t]; });
   $('lang').setAttribute('aria-label', t.langLabel);
+  $('intro').setAttribute('aria-label', t.loading);
   ['Score', 'Goals', 'Assists', 'Saves', 'Shots'].forEach((k) => { $(`th${k}`).textContent = t.stat[k.toLowerCase()]; });
   paintStatus();
 }
@@ -306,4 +308,6 @@ async function start() {
   events.addEventListener('match', () => { if (tab === 'stats') paintStats(); });
 }
 
-start().catch((e) => { if (e.message !== 'login') console.error(e); });
+// Hide the loading screen once everything is in (at least until the logo has built up)
+const introDone = () => setTimeout(() => $('intro').classList.add('done'), Math.max(0, 1300 - performance.now()));
+start().then(introDone, (e) => { if (e.message !== 'login') { console.error(e); introDone(); } });
