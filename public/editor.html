@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>RocketWatchr · Editor</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/css/editor.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand"><img src="/logo.svg" alt="" width="30" height="30" /><img src="/logo-wordmark.svg" alt="RocketWatchr" height="18" /></div>
+      <nav class="tabs" role="tablist">
+        <button type="button" role="tab" data-tab="overlay" aria-selected="true" data-t="tabOverlay"></button>
+        <button type="button" role="tab" data-tab="ranks" aria-selected="false" data-t="tabRanks"></button>
+        <button type="button" role="tab" data-tab="stats" aria-selected="false" data-t="tabStats"></button>
+      </nav>
+      <span class="grow"></span>
+      <span class="status" id="status" role="status"></span>
+      <select id="lang" class="lang"></select>
+      <button type="button" class="btn ghost" id="logout" data-t="logout" hidden></button>
+    </header>
+
+    <main>
+      <!-- Overlay: settings on the left, live preview on the right -->
+      <section class="view ov-view" id="v-overlay">
+        <aside class="side">
+          <div class="sec">
+            <h2 class="disp" data-t="overlay"></h2>
+            <select id="ovSel" aria-label="Overlay"></select>
+            <label><div class="lbl" data-t="name"></div><input type="text" id="ovName" maxlength="60" /></label>
+            <div><div class="lbl" data-t="layout"></div><div class="seg" id="layoutSeg"></div></div>
+            <div class="row"><button type="button" class="btn ghost" id="ovNew" data-t="newOverlay"></button><button type="button" class="btn ghost" id="ovDup" data-t="duplicate"></button><span class="grow"></span><button type="button" class="btn danger" id="ovDel" data-t="remove"></button></div>
+            <p class="err" id="ovErr" role="alert"></p>
+          </div>
+          <div class="sec">
+            <h2 class="disp" data-t="obs"></h2>
+            <div class="url"><input type="text" id="obsUrl" readonly aria-label="OBS URL" /><button type="button" class="btn" id="copy" data-t="copy"></button></div>
+            <p class="hint" id="obsHint"></p>
+          </div>
+          <div class="sec" id="secBar">
+            <div><div class="lbl" data-t="barStats"></div><div class="checks" id="barStats"></div></div>
+            <label class="check"><input type="checkbox" id="showName" /><span data-t="showName"></span></label>
+            <label class="check"><input type="checkbox" id="hideIdle" /><span data-t="hideIdle"></span></label>
+          </div>
+          <div class="sec" id="secCard">
+            <div><div class="lbl" data-t="modes"></div><div class="seg" id="modesSeg"></div></div>
+            <div><div class="lbl" data-t="cycle"></div><div class="slider"><input type="range" id="cycleSeconds" min="3" max="30" step="1" /><output id="cycleOut"></output></div></div>
+            <label class="check"><input type="checkbox" id="followLive" /><span data-t="followLive"></span></label>
+            <label class="check"><input type="checkbox" id="onlyPlayed" /><span data-t="onlyPlayed"></span></label>
+            <div><div class="lbl" data-t="symbols"></div><div class="seg" id="symSeg"><button type="button" data-v="own" data-t="symOwn"></button><button type="button" data-v="images" data-t="symImg"></button></div><p class="hint" id="symNote" data-t="symNote"></p></div>
+            <div><div class="lbl" data-t="cardParts"></div><div class="checks" id="cardParts"></div></div>
+            <div><div class="lbl" data-t="cardStats"></div><div class="checks" id="cardStats"></div></div>
+          </div>
+          <div class="sec" id="secFeed">
+            <div><div class="lbl" data-t="feedEvents"></div><div class="checks" id="feedEvents"></div></div>
+            <div><div class="lbl" data-t="feedSeconds"></div><div class="slider"><input type="range" id="feedSeconds" min="1" max="8" step="0.2" /><output id="feedOut"></output></div></div>
+            <label class="check"><input type="checkbox" id="showPoints" /><span data-t="showPoints"></span></label>
+          </div>
+          <div class="sec">
+            <h2 class="disp" data-t="design"></h2>
+            <div class="grid2">
+              <label class="row"><input type="color" id="blue" /><span data-t="blue"></span></label>
+              <label class="row"><input type="color" id="orange" /><span data-t="orange"></span></label>
+            </div>
+            <div><div class="lbl" data-t="panel"></div><div class="slider"><input type="range" id="panel" min="40" max="100" step="1" /><output id="panelOut"></output></div></div>
+            <div><div class="lbl" data-t="scale"></div><div class="slider"><input type="range" id="scale" min="50" max="200" step="5" /><output id="scaleOut"></output></div></div>
+            <label><div class="lbl" data-t="overlayLang"></div><select id="ovLang"></select></label>
+            <div><button type="button" class="btn ghost" id="resetDesign" data-t="resetDesign"></button></div>
+          </div>
+        </aside>
+        <div class="stagewrap">
+          <div class="stagehead"><h2 class="disp" data-t="preview"></h2><span data-t="checker"></span></div>
+          <div class="stage"><div id="preview"></div></div>
+          <p class="err" id="saveErr" role="alert"></p>
+        </div>
+      </section>
+
+      <!-- Player and ranks -->
+      <section class="view" id="v-ranks" hidden>
+        <div class="page">
+          <div class="card">
+            <h2 class="disp" data-t="player"></h2>
+            <label><div class="lbl" data-t="playerName"></div><input type="text" id="player" maxlength="64" style="max-width:360px" /></label>
+            <p class="hint"><span data-t="playerHint"></span> <span id="detected"></span></p>
+          </div>
+          <div class="card">
+            <h2 class="disp" data-t="ranks"></h2>
+            <p class="hint" data-t="ranksHint"></p>
+            <div style="overflow-x:auto"><table class="ranks"><thead><tr><th></th><th data-t="mode"></th><th data-t="tier"></th><th data-t="division"></th><th class="num">MMR</th><th class="num" data-t="divFrom"></th><th class="num" data-t="divTo"></th><th></th></tr></thead><tbody id="rankRows"></tbody></table></div>
+          </div>
+          <div class="card o">
+            <h2 class="disp" data-t="playlists"></h2>
+            <p class="hint" data-t="playlistsHint"></p>
+            <div id="playlists"></div>
+          </div>
+          <div class="card o">
+            <h2 class="disp" data-t="session"></h2>
+            <div class="row"><span id="sessionSince" class="grow"></span><button type="button" class="btn orange" id="sessionNew" data-t="sessionNew"></button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Statistics, saved on the server -->
+      <section class="view" id="v-stats" hidden>
+        <div class="page">
+          <div class="card">
+            <div class="seg" id="statModes"></div>
+            <div class="tiles" id="tiles"></div>
+          </div>
+          <div class="card">
+            <h2 class="disp" data-t="stChart"></h2>
+            <div id="chart"></div>
+          </div>
+          <div class="card">
+            <h2 class="disp" data-t="stList"></h2>
+            <div style="overflow-x:auto"><table class="matches"><thead><tr><th data-t="stDate"></th><th data-t="mode"></th><th data-t="stResult"></th><th class="num" id="thScore"></th><th class="num" id="thGoals"></th><th class="num" id="thAssists"></th><th class="num" id="thSaves"></th><th class="num" id="thShots"></th><th class="num">MVP</th><th class="num" data-t="stMmrAfter"></th><th class="num">±</th><th></th></tr></thead><tbody id="matchRows"></tbody></table></div>
+            <p class="empty" id="noMatches" data-t="stEmpty" hidden></p>
+            <p class="err" id="statErr" role="alert"></p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/js/editor.js"></script>
+  </body>
+</html>

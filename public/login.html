@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Sign in · RocketWatchr</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/css/editor.css" />
+    <style>
+      body { min-height: 100vh; display: grid; place-items: center; padding: 16px;
+        background: radial-gradient(900px 500px at 15% -10%, rgba(31, 143, 255, .16), transparent 70%), radial-gradient(800px 500px at 100% 110%, rgba(255, 138, 31, .12), transparent 70%), var(--bg); }
+      .login { width: min(420px, 100%); background: var(--panel); padding: 30px 30px 28px; position: relative; clip-path: polygon(0 0, 100% 0, calc(100% - 22px) 100%, 0 100%); }
+      .login::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--blue); }
+      .login::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, var(--blue) 50%, var(--orange) 50%); }
+      .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 26px; }
+      .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--orange); }
+      h1 { margin: 10px 0 8px; font-size: 40px; line-height: 1; }
+      .sub { color: var(--muted); margin: 0 0 22px; }
+      .login label { margin-bottom: 16px; }
+      .login .btn { width: 100%; padding: 14px; font-size: 18px; }
+      .msg { min-height: 1.5em; margin: 14px 0 0; color: var(--danger); }
+    </style>
+  </head>
+  <body>
+    <form class="login" id="form" novalidate>
+      <div class="head">
+        <div class="brand"><img src="/logo.svg" alt="" width="30" height="30" /><img src="/logo-wordmark.svg" alt="RocketWatchr" height="18" /></div>
+        <select id="lang" class="lang" aria-label="Language"></select>
+      </div>
+      <div class="eyebrow" data-t="loginEyebrow"></div>
+      <h1 class="disp" data-t="loginH"></h1>
+      <p class="sub" data-t="loginSub"></p>
+      <label><div class="lbl" data-t="loginUser"></div><input type="text" id="user" autocomplete="username" autofocus /></label>
+      <label><div class="lbl" data-t="loginPass"></div><input type="password" id="password" autocomplete="current-password" /></label>
+      <button class="btn" type="submit" id="submit" data-t="loginBtn"></button>
+      <p class="msg" id="msg" role="alert"></p>
+    </form>
+    <script type="module">
+      import { LANGS, TEXTS, guessLang } from '/js/i18n.js';
+      const $ = (id) => document.getElementById(id);
+      let lang = guessLang();
+      const NAMES = { en: 'English', de: 'Deutsch', ru: 'Русский', fr: 'Français' };
+      $('lang').innerHTML = LANGS.map((l) => `<option value="${l}">${NAMES[l]}</option>`).join('');
+      let msgKey = '';
+      function paint() {
+        const t = TEXTS[lang];
+        document.documentElement.lang = lang;
+        $('lang').value = lang;
+        $('lang').setAttribute('aria-label', t.langLabel);
+        document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t[el.dataset.t]; });
+        $('msg').textContent = msgKey ? t[msgKey] : '';
+      }
+      $('lang').addEventListener('change', () => { lang = $('lang').value; try { localStorage.setItem('rw-lang', lang); } catch {} paint(); });
+      paint();
+      // Only paths on this server count as a target
+      let next = new URLSearchParams(location.search).get('next') || '';
+      if (!/^\/(?![\/\\])/.test(next)) next = '/editor.html';
+      const show = (key) => { msgKey = key; paint(); };
+      $('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const user = $('user').value.trim(), password = $('password').value;
+        if (!user || !password) return show('loginMissing');
+        $('submit').disabled = true;
+        try {
+          const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user, password }) });
+          if (res.ok) return location.replace(next);
+          const { error } = await res.json().catch(() => ({}));
+          show({ wrong: 'loginWrong', locked: 'loginLocked', disabled: 'loginDisabled' }[error] ?? 'loginNoServer');
+        } catch { show('loginNoServer'); }
+        $('submit').disabled = false;
+      });
+      // Without a password there is nothing to sign in to
+      fetch('/api/me').then((r) => r.json()).then((me) => { if (me.user) location.replace(next); }).catch(() => {});
+    </script>
+  </body>
+</html>

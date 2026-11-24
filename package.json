@@ -1,0 +1,20 @@
+{
+  "name": "rocketwatchr",
+  "version": "0.1.0",
+  "description": "Rocket League stats overlays for OBS: live bar, session card and statfeed, with an editor and saved statistics.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.ts",
+    "demo": "node --disable-warning=ExperimentalWarning src/server.ts --demo",
+    "test": "node --disable-warning=ExperimentalWarning --test src/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.9.3"
+  }
+}
